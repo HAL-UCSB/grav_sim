@@ -1,0 +1,44 @@
+[project]
+name = "grav-sim"
+version = "0.1.0"
+description = "Forward kinematic simulator of grasping hand single-finger reach."
+readme = "README.md"
+authors = [
+    { name = "Arthur Caetano", email = "caetano@ucsb.edu" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "chumpy",
+    "manotorch",
+    "plotly>=6.2.0",
+    "pydantic-settings>=2.10.1",
+    "streamlit>=1.46.1",
+    "torch>=2.7.1",
+    "trimesh>=4.7.0",
+    "opencv-python (>=4.11.0.86,<5.0.0.0)",
+    "pydantic>=2.11.7",
+    "python-fcl>=0.7.0.8",
+    "shapely>=2.1.1",
+    "manifold3d>=3.1.1",
+    "gdown>=5.2.0",
+    "deprecation>=2.1.0",
+    "alphashape>=1.3.1",
+    "scikit-learn (>=1.6.1,<2.0.0)",
+    "kaleido>=1.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+manotorch = { git = "https://github.com/lixiny/manotorch.git" }
+chumpy = { git = "https://github.com/caetanolab/chumpy.git" }
+
+[tool.uv.workspace]
+members = [
+    "grav_sim",
+]
+
+[project.scripts]
+grav_sim = "grav_sim.__main__:main"
