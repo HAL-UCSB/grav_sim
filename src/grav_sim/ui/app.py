@@ -97,7 +97,7 @@ if scene := st.selectbox('scene', scenes):
             viz.mesh_plot(obj_mesh),
             body.mesh_plot()))
 
-generate_gif = st.checkbox('Generate GIF', True)
+generate_gif = st.checkbox('Generate GIF', False)
 if st.button('Run simulation'):
     st.session_state.pcd_full.clear()
     st.session_state.frames.clear()
@@ -147,7 +147,10 @@ if st.session_state.pcd_full:
     fig = viz.figure(
         viz.mesh_plot(obj_mesh),
         body.mesh_plot(),
-        viz.scatter_plot(st.session_state.pcd_full)
+        viz.scatter_plot(
+            st.session_state.pcd_full,
+            colors=np.ones(len(st.session_state.pcd_full))
+        )
     )
 
     st.download_button(

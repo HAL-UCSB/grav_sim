@@ -14,7 +14,7 @@ Follow the instructions on the provided in verify_assets page.
 ## Running
 
 ```bash
-uv run streamlit run .\src\grav_sim\ui\app.py
+uv run grav_sim
 ```
 
 ## Cite

@@ -4,6 +4,6 @@ import sys
 from streamlit.web import cli as stcli
 
 def main():
-    script = Path(__file__).with_name('app') / 'ui.py'
+    script = Path(__file__).with_name('ui') / 'app.py'
     sys.argv = ['streamlit', 'run', str(script)]
     sys.exit(stcli.main())
