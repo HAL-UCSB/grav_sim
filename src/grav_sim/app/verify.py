@@ -28,7 +28,7 @@ def all_assets_exist():
 
 
 def resolve_rom_csv():
-    if st.button('Download'):
+    if st.button('Download ROM CSV'):
         url = r'https://github.com/HAL-UCSB/grav_sim/blob/main/assets/eatonhand_rom.csv'
         with request.urlopen(url) as response:
             content = response.read()
@@ -38,7 +38,7 @@ def resolve_rom_csv():
 
 
 def resolve_hand_segments():
-    if st.button('Download'):
+    if st.button('Download Hand Segments'):
         url = r'https://github.com/HAL-UCSB/grav_sim/blob/main/assets/hand_segments.zip'
         with request.urlopen(url) as response:
             zip_content = io.BytesIO(response.read())
@@ -55,7 +55,7 @@ def resolve_mano():
     mano_zip_path = pathlib.Path(st.text_input('MANO zip path:'))
     if not mano_zip_path.exists() or not mano_zip_path.match('*.zip'):
         st.error(f'{mano_zip_path} must be an existing zip file')
-    elif st.button('Unzip'):
+    elif st.button(f'Unzip {mano_zip_path.stem}'):
         with ZipFile(mano_zip_path) as mano_zip:
             mano_zip.extractall(settings.assets)
             unzipped = settings.assets / mano_zip.filelist[0].filename
@@ -69,7 +69,7 @@ def resolve_mano():
 def resolve_ycb_aff():
     # https://github.com/enriccorona/YCB_Affordance?tab=readme-ov-file#download-data
     models_zip_path = settings.assets / 'models.zip'
-    if st.button('Download'):
+    if st.button('Download YCB Affordances'):
         with st.spinner('Downloading YCB Affordances Models'):
             gdown.download(
                 id='1FdAWKpZTJBYctLNOZmlXGP7FGhE4etf0',
