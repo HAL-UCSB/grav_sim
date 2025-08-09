@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from manotorch.manolayer import MANOOutput, ManoLayer
 
 
-def _mesh_plot(vertices, faces, color=None, opacity=.5):
+def _mesh_plot(vertices, faces, color=None, opacity=.5, **kwargs):
     if vertices.shape[0] != 3 or faces.shape[0] != 3:
         vertices = vertices.T
         faces = faces.T
@@ -20,11 +20,12 @@ def _mesh_plot(vertices, faces, color=None, opacity=.5):
     if color is not None:
         mesh3d_kwargs.update(color=color)
 
+    mesh3d_kwargs.update(kwargs)
     return go.Mesh3d(**mesh3d_kwargs)
 
 
-def mesh_plot(mesh, color=None, opacity=.5):
-    return _mesh_plot(mesh.vertices, mesh.faces, color, opacity)
+def mesh_plot(mesh, color=None, opacity=.5, **kwargs):
+    return _mesh_plot(mesh.vertices, mesh.faces, color, opacity, **kwargs)
 
 
 def mano_plot(mano_output: MANOOutput, mano_layer: ManoLayer, closed_faces=True, opacity=.5):
@@ -32,7 +33,7 @@ def mano_plot(mano_output: MANOOutput, mano_layer: ManoLayer, closed_faces=True,
     return _mesh_plot(mano_output.verts[0], faces)
 
 
-def scatter_plot(vertices, colors=None, opacity=.5, colorscale='Bluered'):
+def scatter_plot(vertices, colors=None, opacity=.5, colorscale='Bluered', **kwargs):
     if isinstance(vertices, list):
         vertices = np.array(vertices)
     if vertices.size == 3:
@@ -58,6 +59,7 @@ def scatter_plot(vertices, colors=None, opacity=.5, colorscale='Bluered'):
         marker_dict['colorscale'] = colorscale
         scatter_3d_kwargs['marker'] = marker_dict
 
+    scatter_3d_kwargs.update(kwargs)
     return go.Scatter3d(**scatter_3d_kwargs)
 
 

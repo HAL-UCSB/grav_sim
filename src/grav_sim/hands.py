@@ -26,6 +26,7 @@ segment_joints = dict(
     finger_4=[7, 8, 9, 20])
 finger_labels = ['Index', 'Middle', 'Ring', 'Pinky', 'Thumb']
 
+
 def joint_to_finger_label(joint):
     for i, (finger_n, joints) in enumerate(segment_joints.items()):
         if joint in joints:
@@ -255,8 +256,8 @@ class Hand:
             self.vertices,
             self.faces)
 
-    def mesh_plot(self, opacity=.5):
-        return mesh_plot(self.mesh(), opacity=opacity)
+    def mesh_plot(self, color=None, opacity=.5, **kwargs):
+        return mesh_plot(self.mesh(), color=color, opacity=opacity, **kwargs)
 
 
 def standard_orientation(body, obj_mesh):
