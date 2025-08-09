@@ -6,7 +6,6 @@ from zipfile import ZipFile
 from urllib import request
 
 import gdown
-import requests
 import streamlit as st
 
 from grav_sim import settings, Settings
@@ -39,7 +38,7 @@ def resolve_rom_csv():
 
 def resolve_hand_segments():
     if st.button('Download Hand Segments'):
-        url = r'https://github.com/HAL-UCSB/grav_sim/blob/main/assets/hand_segments.zip'
+        url = r'https://raw.githubusercontent.com/HAL-UCSB/grav_sim/refs/heads/main/assets/hand_segments.zip'
         with request.urlopen(url) as response:
             zip_content = io.BytesIO(response.read())
             with ZipFile(zip_content) as hand_segments_zip:
