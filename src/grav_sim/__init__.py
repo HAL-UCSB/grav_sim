@@ -1,6 +1,7 @@
 import os
 import pathlib
 from typing import ClassVar
+from importlib import resources
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -13,7 +14,7 @@ class Settings(BaseSettings):
     hand_segments_assets: pathlib.Path
 
     _ENV_VAR_GRASPR_DOT_ENV: ClassVar[str] = 'GRASPR_DOT_ENV'
-    _DEFAULT_GRASPR_DOT_ENV: ClassVar[pathlib.Path] = pathlib.Path('default.env')
+    _DEFAULT_GRASPR_DOT_ENV: ClassVar[pathlib.Path] = resources.files('grav_sim') / 'default.env'
 
     model_config = SettingsConfigDict(
         env_file=os.environ.get(
@@ -21,7 +22,6 @@ class Settings(BaseSettings):
             _DEFAULT_GRASPR_DOT_ENV),
         env_file_encoding='utf-8',
         extra='ignore')
-
 
 settings = Settings()
 
