@@ -6,6 +6,13 @@ from grav_sim import hands, viz
 
 st.title('MANOTorch AxisLayerFK Compose')
 
+column = iter(st.columns(4))
+display_origin = next(column).checkbox('Display origin', False)
+display_wrist = next(column).checkbox('Display wrist', False)
+hand_color = next(column).color_picker('Hand color')
+opacity = next(column).slider('Hand opacity', min_value=0.0, max_value=1.0)
+
+
 left, right = st.columns(2)
 anatomical_pose_params = np.zeros((1, 16, 3))
 segment_labels = ['Wrist', 'Index', 'Middle', 'Pinky', 'Ring', 'Thumb']
@@ -27,7 +34,8 @@ for i in range(16):
         for column, j in zip(container.columns(3), range(3)):
             joint_degrees = column.number_input(
                 f'{xyz[j]}',
-                min_value=0,
+                value=0,
+                min_value=-360,
                 max_value=360,
                 key=f'number_input_{segment_idx}_{joint_idx}_{j}')
             anatomical_pose_params[0, i, j] = np.deg2rad(joint_degrees)
@@ -35,9 +43,15 @@ for i in range(16):
 with right:
     body = hands.Hand()
     body.compose(anatomical_pose_params)
-    st.plotly_chart(
-        viz.figure(
-            body.mesh_plot(),
-            viz.scatter_plot(np.zeros(3), colors=np.array([1, 0, 0]))
-        )
-    )
+
+    plots = [
+        body.mesh_plot(color=hand_color, opacity=opacity)
+    ]
+    if display_origin:
+        origin = viz.scatter_plot(np.zeros(3), colors=np.array([1, 0, 0]))
+        plots.append(origin)
+    if display_wrist:
+        origin = viz.scatter_plot(body.joints[0], colors=np.array([1, 0, 0]))
+        plots.append(origin)
+
+    st.plotly_chart(viz.figure(*plots))

@@ -28,6 +28,7 @@ from grav_sim import viz
 from grav_sim import hands
 from grav_sim import settings
 from grav_sim import sim
+from grav_sim import costs
 
 
 @st.cache_resource
@@ -39,10 +40,9 @@ def get_rom():
 
 body = hands.Hand()
 
-if 'pcd_full' not in st.session_state:
-    st.session_state.pcd_full = []
+if 'results' not in st.session_state:
+    st.session_state.results = None
     st.session_state.frames = []
-    st.session_state.poses = []
 
 horizontal = iter(st.columns(4))
 
@@ -98,10 +98,9 @@ if scene := st.selectbox('scene', scenes):
             body.mesh_plot()))
 
 generate_gif = st.checkbox('Generate GIF', False)
-if st.button('Run simulation'):
-    st.session_state.pcd_full.clear()
+if st.button('Run simulation', icon=':material/precision_manufacturing:'):
+    st.session_state.results = None
     st.session_state.frames.clear()
-    st.session_state.poses.clear()
 
     rom = get_rom()
     simulation = sim.Simulation(
@@ -110,6 +109,7 @@ if st.button('Run simulation'):
         rom)
 
     with st.spinner("Simulating...", show_time=True):
+        all_results = []
         for fingertip in selected_fingertips:
             simulation.simulate(
                 max_pcd_size,
@@ -119,9 +119,9 @@ if st.button('Run simulation'):
                 randomize=randomize,
                 record_animation=generate_gif,
                 verbose=True)
-            st.session_state.pcd_full += simulation.pcd.tolist()
-            st.session_state.poses += simulation.poses.tolist()
+            all_results.append(simulation.get_result_df())
             st.session_state.frames += simulation.frames
+        st.session_state.results = pd.concat(all_results, ignore_index=True)
 
     if st.session_state.frames:
         progress_bar = st.progress(0, 'Generating GIF')
@@ -143,23 +143,27 @@ if st.button('Run simulation'):
         progress_bar.progress(1)
         progress_bar.empty()
 
-if st.session_state.pcd_full:
+if st.session_state.results is not None:
+
+    pcd = st.session_state.results[sim.xyz_columns].to_numpy()
+    pose = st.session_state.results[sim.pose_columns].to_numpy()
+
     fig = viz.figure(
         viz.mesh_plot(obj_mesh),
         body.mesh_plot(),
         viz.scatter_plot(
-            st.session_state.pcd_full,
-            colors=np.ones(len(st.session_state.pcd_full))
+            pcd,
+            colors=np.linalg.norm(pose, axis=1)
         )
     )
 
     st.download_button(
-        label='Download point cloud as CSV',
-        data=pd.DataFrame(
-            st.session_state.filtered_pcd if 'filtered_pcd' in st.session_state else st.session_state.pcd_full).to_csv(
-            index=False).encode('utf-8'),
-        file_name=f'{scene}.csv',
-        mime='text/csv')
+        label='Export results',
+        data=st.session_state.results.to_csv(index_label='sim_index').encode('utf-8'),
+        file_name=f'{scene.stem}.csv',
+        mime='text/csv',
+        icon=':material/download:'
+    )
 
     if st.session_state.frames:
         st.image('simulation.gif')

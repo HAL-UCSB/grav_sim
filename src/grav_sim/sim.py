@@ -10,6 +10,10 @@ from grav_sim.geom import erode, nearest_neighbor
 from grav_sim.hands import Hand, joint_to_limb_name
 from grav_sim.viz import scatter_plot, mesh_plot
 
+xyz_columns = list('xyz')
+pose_columns = [f'pose_{i}' for i in range(48)]
+joint_column = 'joint'
+
 
 def _generate_poses(joint, pose, step):
     poses = list()
@@ -29,10 +33,11 @@ class Simulation:
         self.body = body
         self.seed_pose = self.body.anatomical_pose_params.detach().numpy()
 
-        self.obj_mesh = obj_mesh
-        self.pcd = []
         self.pcd_size = 0
-        self.poses = []
+        self.pcd = None
+        self.poses = None
+        self.joints = None
+        self.obj_mesh = obj_mesh
         self.rom = rom
         self.frames = list()
         self.frame_titles = list()
@@ -61,7 +66,7 @@ class Simulation:
         self.frames.append([
             mesh_plot(self.obj_mesh),
             self.body.mesh_plot(),
-            scatter_plot(_pcd, colors=np.array([1,0,0] * len(_pcd)))
+            scatter_plot(_pcd, colors=np.array([1, 0, 0] * len(_pcd)))
         ])
 
     def simulate(self, max_pcd_size, step_size, kinematic_chain, tracked_joint_index=-1, sparsity=None, randomize=True,
@@ -82,8 +87,9 @@ class Simulation:
 
         # initialize buffers
         self.pcd_size = 0
-        self.pcd = np.empty((int(max_pcd_size), 3))
-        self.poses = []
+        self.pcd = np.empty((int(max_pcd_size), 3), dtype=float)
+        self.poses = np.empty((int(max_pcd_size), 48), dtype=float)
+        self.joints = np.empty((int(max_pcd_size), 1), dtype=int)
         self.frames = []
         visits = set()
 
@@ -148,7 +154,8 @@ class Simulation:
             # add to the pcd
             tracked_position = self.body.joints[tracked_joint].copy()
             self.pcd[self.pcd_size] = tracked_position
-            self.poses.append(pose.flatten().copy())
+            self.poses[self.pcd_size] = pose.flatten().copy()
+            self.joints[self.pcd_size] = tracked_joint
             self.pcd_size += 1
 
             # record animation frame
@@ -160,7 +167,7 @@ class Simulation:
                 next_poses = _generate_poses(link, pose, step_size)
                 jobs += [(link, next_pose) for next_pose in next_poses]
 
-            # conservative estimate of the minimum distance traversed by a step
+            # auto set sparsity: conservative estimate of the minimum distance traversed by a step
             if sparsity is None:
                 distances = []
                 for close_pose in _generate_poses(joint, pose, step_size):
@@ -170,23 +177,24 @@ class Simulation:
                 # safety margin
                 sparsity = np.median(distances) * .975
 
-        self.poses = np.array(self.poses)
         self.pcd = self.pcd[:self.pcd_size, :].copy()
+        self.poses = self.poses[:self.pcd_size, :].copy()
+        self.joints = self.joints[:self.pcd_size, :].copy()
         self.body.compose(self.seed_pose)
         if progress:
             progress(1.0)
 
-    def save_results(self, dir_path, filename=None):
-        position_columns = ['x', 'y', 'z']
-        pose_columns = [f'pose_{i}' for i in range(self.poses.shape[-1])]
-        result = pd.DataFrame(self.pcd, columns=position_columns)
+    def get_result_df(self):
+        result = pd.DataFrame(self.pcd, columns=xyz_columns)
         result[pose_columns] = self.poses
+        result[joint_column] = self.joints
+        return result
+
+    def save_results(self, dir_path, filename=None):
+        result = self.get_result_df()
         result_path = dir_path / (filename or 'simulation.csv')
         result.to_csv(result_path, index_label='sim_index')
         params_path = dir_path / 'params.json'
         if not params_path.exists():
             with params_path.open('w') as file:
                 json.dump(self._params, file)
-
-    def continue_simulation(self, dir_path):
-        raise

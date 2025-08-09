@@ -84,12 +84,18 @@ def list_scene_paths(object_name=None, grasp_index=None, object_grasp_df=None, r
     if object_name is None:
         mask = np.isin(object_grasp_df.grasp, grasp_index)
     else:
-        mask = np.isin(object_grasp_df.object, object_name)
+        mask = object_grasp_df.object.apply(lambda name: object_name in name)
         if grasp_index is not None:
             mask &= np.isin(object_grasp_df.grasp, grasp_index)
     if return_df:
         return object_grasp_df[mask]
     return object_grasp_df[mask].path.values.tolist()
+
+
+def list_object_names(object_grasp_df=None, data_path=settings.ycb_aff_assets):
+    if object_grasp_df is None:
+        object_grasp_df = create_object_grasp_df(data_path=data_path)
+    return list(sorted(set([name[4:] for name in np.unique(object_grasp_df.object)])))
 
 
 def get_obj_mesh_path(scene_data):
