@@ -27,23 +27,25 @@ def all_assets_exist():
 
 
 def resolve_rom_csv():
-    url = r'https://github.com/HAL-UCSB/grav_sim/blob/main/assets/eatonhand_rom.csv'
-    with request.urlopen(url) as response:
-        content = response.read()
-        with settings.rom_csv.open('w') as f:
-            f.write(content)
-            st.rerun()
+    if st.button('Download'):
+        url = r'https://github.com/HAL-UCSB/grav_sim/blob/main/assets/eatonhand_rom.csv'
+        with request.urlopen(url) as response:
+            content = response.read()
+            with settings.rom_csv.open('wb') as f:
+                f.write(content)
+                st.rerun()
 
 
 def resolve_hand_segments():
-    url = r'https://github.com/HAL-UCSB/grav_sim/blob/main/assets/hand_segments.zip'
-    with request.urlopen(url) as response:
-        zip_content = response.read()
-        with ZipFile(zip_content) as hand_segments_zip:
-            hand_segments_zip.extractall(settings.assets)
-            unzipped = settings.assets / hand_segments_zip.filelist[0].filename
-            settings.mano_assets = unzipped
-            st.rerun()
+    if st.button('Download'):
+        url = r'https://github.com/HAL-UCSB/grav_sim/blob/main/assets/hand_segments.zip'
+        with request.urlopen(url) as response:
+            zip_content = response.read()
+            with ZipFile(zip_content) as hand_segments_zip:
+                hand_segments_zip.extractall(settings.assets)
+                unzipped = settings.assets / hand_segments_zip.filelist[0].filename
+                settings.mano_assets = unzipped
+                st.rerun()
 
 
 def resolve_mano():
