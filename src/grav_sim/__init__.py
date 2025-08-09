@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     hand_segments_assets: pathlib.Path
 
     _ENV_VAR_GRASPR_DOT_ENV: ClassVar[str] = 'GRASPR_DOT_ENV'
-    _DEFAULT_GRASPR_DOT_ENV: ClassVar[pathlib.Path] = pathlib.Path('.env')
+    _DEFAULT_GRASPR_DOT_ENV: ClassVar[pathlib.Path] = pathlib.Path('default.env')
 
     model_config = SettingsConfigDict(
         env_file=os.environ.get(

@@ -42,3 +42,7 @@ members = [
 
 [project.scripts]
 grav_sim = "grav_sim.__main__:main"
+
+
+[tool.setuptools.package-data]
+grav_sim = ["default.env"]
