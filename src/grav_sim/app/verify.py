@@ -1,3 +1,4 @@
+import io
 import os
 import pathlib
 from io import BytesIO
@@ -40,7 +41,7 @@ def resolve_hand_segments():
     if st.button('Download'):
         url = r'https://github.com/HAL-UCSB/grav_sim/blob/main/assets/hand_segments.zip'
         with request.urlopen(url) as response:
-            zip_content = response.read()
+            zip_content = io.BytesIO(response.read())
             with ZipFile(zip_content) as hand_segments_zip:
                 hand_segments_zip.extractall(settings.assets)
                 unzipped = settings.assets / hand_segments_zip.filelist[0].filename
@@ -103,7 +104,7 @@ st.markdown(f'Using settings located at `{settings_path.absolute()}`')
 st.code(settings_path.read_text(), language='bash')
 settings.assets.mkdir(exist_ok=True)
 
-st.markdown(f'Hand Segments {"✅" if settings.rom_csv.exists() else "❌"}')
+st.markdown(f'ROM CSV {"✅" if settings.rom_csv.exists() else "❌"}')
 if not settings.rom_csv.exists():
     resolve_rom_csv()
 
