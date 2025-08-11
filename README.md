@@ -27,8 +27,9 @@ Follow the instructions on the provided in verify_assets page.
 uv run grav_sim
 ```
 
-![](assets/app.png)
-![](assets/simulation.gif)
+<img src="assets/app.png" alt="drawing" width="400"/>
+
+<img src="assets/simulation.gif" alt="drawing" width="600"/>
 
 ## Cite
 
