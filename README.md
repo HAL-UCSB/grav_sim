@@ -2,12 +2,22 @@
 
 Forward kinematics simulator for grasping hand single-finger motion.
 
-## Setup
+## Use as a Library
+in you UV project:
+```bash
+uv add git+https://github.com/HAL-UCSB/grav_sim.git
+uv run grav_sim verify
+```
+Follow the instructions on the provided in verify_assets page.
+
+## Development Setup
 from the repository root folder:
 ```bash
+git clone https://github.com/HAL-UCSB/grav_sim.git
+cd grav_sim
 uv sync
 uv run
-uv run streamlit run .\src\grav_sim\ui\verify_assets.py
+uv run grav_sim verify
 ```
 Follow the instructions on the provided in verify_assets page.
 
@@ -18,15 +28,25 @@ uv run grav_sim
 ```
 
 ![](assets/app.png)
+![](assets/simulation.gif)
 
 ## Cite
 
 ```latex
-@inproceedings{aponte2024grav,
-  title={Grav: Grasp volume data for the design of one-handed xr interfaces},
-  author={Aponte, Alejandro and Caetano, Arthur and Luo, Yunhao and Sra, Misha},
-  booktitle={Proceedings of the 2024 ACM designing interactive systems conference},
-  pages={151--167},
-  year={2024}
+@inproceedings{10.1145/3643834.3661567,
+    author = {Aponte, Alejandro and Caetano, Arthur and Luo, Yunhao and Sra, Misha},
+    title = {GraV: Grasp Volume Data for the Design of One-Handed XR Interfaces},
+    year = {2024},
+    isbn = {9798400705830},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3643834.3661567},
+    doi = {10.1145/3643834.3661567},
+    booktitle = {Proceedings of the 2024 ACM Designing Interactive Systems Conference},
+    pages = {151–167},
+    numpages = {17},
+    keywords = {dataset, extended reality, grasp-proximate interfaces, spatial user interface},
+    location = {Copenhagen, Denmark},
+    series = {DIS '24}
 }
 ```
