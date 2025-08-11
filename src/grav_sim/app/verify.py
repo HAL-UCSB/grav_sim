@@ -22,8 +22,10 @@ def _rm_rf(path: pathlib.Path):
         path.unlink()
 
 
-def all_assets_exist():
-    return settings.mano_assets.exists() and settings.ycb_aff_assets.exists()
+def download_zip(zip_url):
+    response = request.urlopen(zip_url)
+    zip_data = io.BytesIO(response.read())
+    return ZipFile(zip_data)
 
 
 def resolve_rom_csv():
@@ -39,13 +41,11 @@ def resolve_rom_csv():
 def resolve_hand_segments():
     if st.button('Download Hand Segments'):
         url = r'https://raw.githubusercontent.com/HAL-UCSB/grav_sim/refs/heads/main/assets/hand_segments.zip'
-        with request.urlopen(url) as response:
-            zip_content = io.BytesIO(response.read())
-            with ZipFile(zip_content) as hand_segments_zip:
-                hand_segments_zip.extractall(settings.assets)
-                unzipped = settings.assets / hand_segments_zip.filelist[0].filename
-                settings.mano_assets = unzipped
-                st.rerun()
+        hand_segments_zip = download_zip(url)
+        hand_segments_zip.extractall(settings.assets)
+        unzipped = settings.assets / hand_segments_zip.filelist[0].filename
+        settings.mano_assets = unzipped
+        st.rerun()
 
 
 def resolve_mano():
@@ -82,17 +82,15 @@ def resolve_ycb_aff():
 
         with st.spinner('Clonning YCB_Affordance Repo'):
             ycb_aff_repo_zip_url = 'https://github.com/enriccorona/YCB_Affordance/archive/refs/heads/master.zip'
-            response = requests.get(ycb_aff_repo_zip_url)
-            response_bytes = BytesIO(response.content)
-            with ZipFile(response_bytes) as ycb_aff_zip:
-                ycb_aff_zip.extractall(settings.ycb_aff_assets)
-            ycb_aff_repo_path = settings.ycb_aff_assets / ycb_aff_zip.filelist[0].filename
-            grasps_path = ycb_aff_repo_path / 'data' / 'grasps'
-            grasps_path.rename(settings.ycb_aff_assets / grasps_path.name)
-            _rm_rf(models_zip_path)
-            _rm_rf(ycb_aff_repo_path)
+            ycb_aff_zip = download_zip(ycb_aff_repo_zip_url)
 
-        st.rerun()
+        ycb_aff_repo_path = settings.ycb_aff_assets / ycb_aff_zip.filelist[0].filename
+        grasps_path = ycb_aff_repo_path / 'data' / 'grasps'
+        grasps_path.rename(settings.ycb_aff_assets / grasps_path.name)
+        _rm_rf(models_zip_path)
+        _rm_rf(ycb_aff_repo_path)
+
+    st.rerun()
 
 
 st.write(
