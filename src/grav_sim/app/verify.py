@@ -44,7 +44,6 @@ def resolve_hand_segments():
         hand_segments_zip = download_zip(url)
         hand_segments_zip.extractall(settings.assets)
         unzipped = settings.assets / hand_segments_zip.filelist[0].filename
-        settings.mano_assets = unzipped
         st.rerun()
 
 
@@ -73,7 +72,6 @@ def resolve_ycb_aff():
             gdown.download(
                 id='1FdAWKpZTJBYctLNOZmlXGP7FGhE4etf0',
                 output=str(models_zip_path.absolute()))
-            settings.ycb_aff_assets = settings.assets / 'ycb_aff'
 
         with st.spinner('Unzipping Models'):
             with ZipFile(models_zip_path) as models_zip:
@@ -83,6 +81,7 @@ def resolve_ycb_aff():
         with st.spinner('Clonning YCB_Affordance Repo'):
             ycb_aff_repo_zip_url = 'https://github.com/enriccorona/YCB_Affordance/archive/refs/heads/master.zip'
             ycb_aff_zip = download_zip(ycb_aff_repo_zip_url)
+            ycb_aff_zip.extractall(settings.ycb_aff_assets)
 
         ycb_aff_repo_path = settings.ycb_aff_assets / ycb_aff_zip.filelist[0].filename
         grasps_path = ycb_aff_repo_path / 'data' / 'grasps'
@@ -90,7 +89,7 @@ def resolve_ycb_aff():
         _rm_rf(models_zip_path)
         _rm_rf(ycb_aff_repo_path)
 
-    st.rerun()
+        st.rerun()
 
 
 st.write(
