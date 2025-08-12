@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Arthur Caetano", email = "caetano@ucsb.edu" }
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "chumpy",
     "manotorch",

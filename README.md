@@ -2,15 +2,7 @@
 
 Forward kinematics simulator for grasping hand single-finger motion.
 
-## Use as a Library
-in you UV project:
-```bash
-uv add git+https://github.com/HAL-UCSB/grav_sim.git
-uv run grav_sim verify
-```
-Follow the instructions on the provided in verify_assets page.
-
-## Development Setup
+## Development setup
 from the repository root folder:
 ```bash
 git clone https://github.com/HAL-UCSB/grav_sim.git
@@ -21,9 +13,11 @@ uv run grav_sim verify
 ```
 Follow the instructions on the provided in verify_assets page.
 
-## Running
+## Use as command line app
 
 ```bash
+uv add git+https://github.com/HAL-UCSB/grav_sim.git
+uv run grav_sim verify
 uv run grav_sim
 ```
 
