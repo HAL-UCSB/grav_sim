@@ -2,6 +2,9 @@
 
 Forward kinematics simulator for grasping hand single-finger motion.
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17Gr9qjyopvqygkAOb6Huy7m6NI6_16pv?usp=sharing)
+
+
 ## Development setup
 from the repository root folder:
 ```bash
