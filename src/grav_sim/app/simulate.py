@@ -28,7 +28,6 @@ from grav_sim import viz
 from grav_sim import hands
 from grav_sim import settings
 from grav_sim import sim
-from grav_sim import costs
 
 
 @st.cache_resource
