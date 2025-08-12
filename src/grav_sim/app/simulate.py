@@ -33,7 +33,7 @@ from grav_sim import costs
 
 @st.cache_resource
 def get_rom():
-    df_rom = pd.read_csv(settings.rom_csv)
+    df_rom = pd.read_csv(settings.rom_csv_path)
     _rom = np.stack((df_rom.floor.values, df_rom.ceil.values))
     return np.deg2rad(_rom)
 

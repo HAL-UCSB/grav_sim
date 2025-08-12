@@ -46,7 +46,7 @@ feix_taxonomy = [
     'Inferior Pincer']
 
 
-def create_object_grasp_df(data_path=settings.ycb_aff_assets, export_path=None):
+def create_object_grasp_df(data_path=settings.ycb_aff_assets_path, export_path=None):
     paths, objs, grasps = [], [], []
 
     for scene_path in list_scene_paths(data_path=data_path):
@@ -72,7 +72,7 @@ def create_object_grasp_df(data_path=settings.ycb_aff_assets, export_path=None):
 
 
 def list_scene_paths(object_name=None, grasp_index=None, object_grasp_df=None, return_df=False,
-                     data_path=settings.ycb_aff_assets):
+                     data_path=settings.ycb_aff_assets_path):
     if object_name is None and grasp_index is None:
         grasps = pathlib.Path(data_path) / 'grasps'
         pattern = f'obj_*_grasp_*.pickle'
@@ -92,7 +92,7 @@ def list_scene_paths(object_name=None, grasp_index=None, object_grasp_df=None, r
     return object_grasp_df[mask].path.values.tolist()
 
 
-def list_object_names(object_grasp_df=None, data_path=settings.ycb_aff_assets):
+def list_object_names(object_grasp_df=None, data_path=settings.ycb_aff_assets_path):
     if object_grasp_df is None:
         object_grasp_df = create_object_grasp_df(data_path=data_path)
     return list(sorted(set([name[4:] for name in np.unique(object_grasp_df.object)])))
@@ -104,13 +104,13 @@ def get_obj_mesh_path(scene_data):
     path_parts = path.parts[-3:-1]
     path_parts = map(pathlib.Path, path_parts)
     middle = pathlib.Path.joinpath(*path_parts)
-    return settings.ycb_aff_assets / 'models' / middle / 'textured.obj'
+    return settings.ycb_aff_assets_path / 'models' / middle / 'textured.obj'
 
 
 def create_mano_layer():
     return ManoLayer(
         center_idx=0,
-        mano_assets_root=settings.mano_assets,
+        mano_assets_root=settings.mano_assets_path,
         side='right',
         use_pca=True,
         flat_hand_mean=True,

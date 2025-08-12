@@ -32,7 +32,7 @@ def resolve_rom_csv():
         url = r'https://raw.githubusercontent.com/HAL-UCSB/grav_sim/refs/heads/main/assets/eatonhand_rom.csv'
         with request.urlopen(url) as response:
             content = response.read()
-            with settings.rom_csv.open('wb') as f:
+            with settings.rom_csv_path.open('wb') as f:
                 f.write(content)
                 st.rerun()
 
@@ -41,7 +41,7 @@ def resolve_hand_segments():
     if st.button('Download Hand Segments'):
         url = r'https://raw.githubusercontent.com/HAL-UCSB/grav_sim/refs/heads/main/assets/hand_segments.zip'
         hand_segments_zip = download_zip(url)
-        hand_segments_zip.extractall(settings.assets)
+        hand_segments_zip.extractall(settings.assets_path)
         st.rerun()
 
 
@@ -53,18 +53,18 @@ def resolve_mano():
         st.error(f'{mano_zip_path} must be an existing zip file')
     elif st.button(f'Unzip {mano_zip_path.stem}'):
         with ZipFile(mano_zip_path) as mano_zip:
-            mano_zip.extractall(settings.assets)
-            unzipped = settings.assets / mano_zip.filelist[0].filename
-            settings.mano_assets = unzipped.rename(settings.assets / 'mano')
+            mano_zip.extractall(settings.assets_path)
+            unzipped = settings.assets_path / mano_zip.filelist[0].filename
+            mano_assets_path = unzipped.rename(settings.assets_path / 'mano')
             unnecessary_files = '._.DS_Store', 'webuser', '__init__.py'
             for file in unnecessary_files:
-                _rm_rf(settings.mano_assets / file)
+                _rm_rf(mano_assets_path / file)
             st.rerun()
 
 
 def resolve_ycb_aff():
     # https://github.com/enriccorona/YCB_Affordance?tab=readme-ov-file#download-data
-    models_zip_path = settings.assets / 'models.zip'
+    models_zip_path = settings.assets_path / 'models.zip'
     if st.button('Download YCB Affordances'):
         with st.spinner('Downloading YCB Affordances Models'):
             gdown.download(
@@ -74,16 +74,16 @@ def resolve_ycb_aff():
         with st.spinner('Unzipping Models'):
             with ZipFile(models_zip_path) as models_zip:
                 print(models_zip_path)
-                models_zip.extractall(settings.ycb_aff_assets)
+                models_zip.extractall(settings.ycb_aff_assets_path)
 
         with st.spinner('Clonning YCB_Affordance Repo'):
             ycb_aff_repo_zip_url = 'https://github.com/enriccorona/YCB_Affordance/archive/refs/heads/master.zip'
             ycb_aff_zip = download_zip(ycb_aff_repo_zip_url)
-            ycb_aff_zip.extractall(settings.ycb_aff_assets)
+            ycb_aff_zip.extractall(settings.ycb_aff_assets_path)
 
-        ycb_aff_repo_path = settings.ycb_aff_assets / ycb_aff_zip.filelist[0].filename
+        ycb_aff_repo_path = settings.ycb_aff_assets_path / ycb_aff_zip.filelist[0].filename
         grasps_path = ycb_aff_repo_path / 'data' / 'grasps'
-        grasps_path.rename(settings.ycb_aff_assets / grasps_path.name)
+        grasps_path.rename(settings.ycb_aff_assets_path / grasps_path.name)
         _rm_rf(models_zip_path)
         _rm_rf(ycb_aff_repo_path)
 
@@ -96,20 +96,21 @@ st.write(f'`{Settings._ENV_VAR_GRASPR_DOT_ENV}={os.environ.get(Settings._ENV_VAR
 settings_path = pathlib.Path(settings.model_config['env_file'])
 st.markdown(f'Using settings located at `{settings_path.absolute()}`')
 st.code(settings_path.read_text(), language='bash')
-settings.assets.mkdir(exist_ok=True)
 
-st.markdown(f'ROM CSV {"✅" if settings.rom_csv.exists() else "❌"}')
-if not settings.rom_csv.exists():
+settings.assets_path.mkdir(exist_ok=True)
+
+st.markdown(f'ROM CSV {"✅" if settings.rom_csv_path.exists() else "❌"}')
+if not settings.rom_csv_path.exists():
     resolve_rom_csv()
 
-st.markdown(f'Hand Segments {"✅" if settings.hand_segments_assets.exists() else "❌"}')
-if not settings.hand_segments_assets.exists():
+st.markdown(f'Hand Segments {"✅" if settings.hand_segments_assets_path.exists() else "❌"}')
+if not settings.hand_segments_assets_path.exists():
     resolve_hand_segments()
 
-st.markdown(f'MANO {"✅" if settings.mano_assets.exists() else "❌"}')
-if not settings.mano_assets.exists():
+st.markdown(f'MANO {"✅" if settings.mano_assets_path.exists() else "❌"}')
+if not settings.mano_assets_path.exists():
     resolve_mano()
 
-st.markdown(f'YCB Affordances {"✅" if settings.ycb_aff_assets.exists() else "❌"}')
-if not settings.ycb_aff_assets.exists():
+st.markdown(f'YCB Affordances {"✅" if settings.ycb_aff_assets_path.exists() else "❌"}')
+if not settings.ycb_aff_assets_path.exists():
     resolve_ycb_aff()

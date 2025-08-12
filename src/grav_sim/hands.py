@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 import numpy as np
 import torch
@@ -35,7 +36,8 @@ def joint_to_finger_label(joint):
 
 
 segment_faces = dict()
-for segment_path in settings.hand_segments_assets.glob('*_faces.npy'):
+hand_segments_assets_path = pathlib.Path(settings.hand_segments_assets_path)
+for segment_path in hand_segments_assets_path.glob('*_faces.npy'):
     _segment_name = '_'.join(segment_path.name.split('_')[:-1])
     segment_faces[_segment_name] = np.load(segment_path)
 
@@ -52,7 +54,7 @@ def _loss_fn(predicted, actual, joint_eueler_angles, reg_weight=.0001):
 def create_mano_layer():
     return ManoLayer(
         center_idx=None,
-        mano_assets_root=settings.mano_assets,
+        mano_assets_root=settings.mano_assets_path,
         use_pca=False,
         rot_mode='axisang',
         side='right',
