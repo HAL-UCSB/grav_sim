@@ -11,10 +11,9 @@ from the repository root folder:
 git clone https://github.com/HAL-UCSB/grav_sim.git
 cd grav_sim
 uv sync
-uv run
 uv run grav_sim verify
 ```
-Follow the instructions on the provided in verify_assets page.
+Follow the instructions on the provided in _verify_ page.
 
 ## Use as command line app
 
