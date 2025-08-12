@@ -1,9 +1,8 @@
 import io
 import os
 import pathlib
-from io import BytesIO
-from zipfile import ZipFile
 from urllib import request
+from zipfile import ZipFile
 
 import gdown
 import streamlit as st
@@ -30,7 +29,7 @@ def download_zip(zip_url):
 
 def resolve_rom_csv():
     if st.button('Download ROM CSV'):
-        url = r'https://github.com/HAL-UCSB/grav_sim/blob/main/assets/eatonhand_rom.csv'
+        url = r'https://raw.githubusercontent.com/HAL-UCSB/grav_sim/refs/heads/main/assets/eatonhand_rom.csv'
         with request.urlopen(url) as response:
             content = response.read()
             with settings.rom_csv.open('wb') as f:
@@ -43,7 +42,6 @@ def resolve_hand_segments():
         url = r'https://raw.githubusercontent.com/HAL-UCSB/grav_sim/refs/heads/main/assets/hand_segments.zip'
         hand_segments_zip = download_zip(url)
         hand_segments_zip.extractall(settings.assets)
-        unzipped = settings.assets / hand_segments_zip.filelist[0].filename
         st.rerun()
 
 
